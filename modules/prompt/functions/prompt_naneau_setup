@@ -1,0 +1,39 @@
+# Naneau's oh-so-awesome oh-my-zsh theme
+#
+# Gives you a nice multi-line prompt, timestamp on the right
+
+function prompt_naneau_precmd() {
+    vcs_info
+}
+
+function prompt_naneau_setup() {
+    setopt LOCAL_OPTIONS PROMPT_SUBST
+    unsetopt XTRACE KSH_ARRAYS
+    prompt_opts=(cr percent subst)
+
+    autoload -Uz add-zsh-hook
+    autoload -Uz vcs_info
+
+    # add precmd hook
+    add-zsh-hook precmd prompt_naneau_precmd
+
+    zstyle ':vcs_info:*' enable git
+    zstyle ':vcs_info:*:*' check-for-changes true # Can be slow on big repos.
+    zstyle ':vcs_info:*:*' unstagedstr '*'
+    zstyle ':vcs_info:*:*' stagedstr '+'
+    zstyle ':vcs_info:*:*' formats '%F{lightblue}%b%B%F{red}%u%c %B%F{black}(%s)'
+    zstyle ':vcs_info:*:*' formats '%F{lightblue}%b%B%F{red}%u%c %a %B%F{black}(%s)'
+
+    get_time () {
+        echo `date +%H:%M:%S`
+    }
+
+    # Left Prompt
+    PROMPT='
+%K{white}%F{gray} « %k %F{white}%n %F{lightblue}at %F{white}%m %F{lightblue}» %F{white}%~ ${vcs_info_msg_0_}
+%K{white}%F{yellow} ‣ %f%k '
+
+    RPROMPT='%F{white}$(get_time)'
+}
+
+prompt_naneau_setup "$@"
